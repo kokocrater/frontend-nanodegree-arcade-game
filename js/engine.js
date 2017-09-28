@@ -9,19 +9,20 @@
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
  *
- * This engine makes the canvas' context (ctx) object globally available to make 
+ * This engine makes the canvas' context (ctx) object globally available to make
  * writing app.js a little simpler to work with.
  */
 
-var Engine = (function(global) {
+
+var Engine = (function (global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
     var doc = global.document,
         win = global.window,
-        canvas = doc.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
+        canvas = doc.createElement("canvas"),
+        ctx = canvas.getContext("2d"),
         lastTime;
 
     canvas.width = 505;
@@ -107,12 +108,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                "images/water-block.png",   // Top row is water
+                "images/stone-block.png",   // Row 1 of 3 of stone
+                "images/stone-block.png",   // Row 2 of 3 of stone
+                "images/stone-block.png",   // Row 3 of 3 of stone
+                "images/grass-block.png",   // Row 1 of 2 of grass
+                "images/grass-block.png"    // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -151,6 +152,29 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+        scoreboard.render();
+
+        if(won) {
+            var gameWon = new Message("You Win!!!", "yellow", "blue", "10", "72pt impact", 250, row2);
+            gameWon.render();
+            setTimeout(reset, 2000);
+            }
+
+        if(crash) {
+            if(crashCount < 2){
+            explosion.render();
+            setTimeout(reset, 100);
+        } else {
+            lost = true;
+            var gameOver = new Message("Game Over", "yellow", "red", "10", "72pt impact", 250, row2);
+            var totalScore = new Message("your score: " + scoreboard.getScore(), "yellow", "red", "10", "24pt impact", 250, rowStart);
+            // explosion.render();
+            gameOver.render();
+            totalScore.render();
+            setTimeout(reset, 2000);
+        }
+        }
     }
 
     /* This function does nothing but it could have been a good place to
@@ -158,7 +182,22 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.y = rowStart;
+        player.x = 202;
+        if(won) {
+            scoreboard.update();
+            won = false;
+        }
+        if(crash) {
+            crash = false;
+            crashCount++;
+            if(lost) {
+                crashCount = 0;
+                crash = false;
+                lost = false;
+                score = 0;
+            }
+        }
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -166,11 +205,13 @@ var Engine = (function(global) {
      * all of these images are properly loaded our game will start.
      */
     Resources.load([
-        'images/stone-block.png',
-        'images/water-block.png',
-        'images/grass-block.png',
-        'images/enemy-bug.png',
-        'images/char-boy.png'
+        "images/stone-block.png",
+        "images/water-block.png",
+        "images/grass-block.png",
+        "images/enemy-bug.png",
+        "images/char-boy.png",
+        "images/boom.png",
+        "images/explosionSprites.png"
     ]);
     Resources.onReady(init);
 
@@ -179,4 +220,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+
 })(this);
