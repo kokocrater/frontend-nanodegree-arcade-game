@@ -156,6 +156,7 @@ var Scoreboard = function() {
     score = 0;
     };
 
+//object to display score at bottom of screen
 Scoreboard.prototype.update = function() {
         score += 100;
 };
@@ -173,6 +174,7 @@ Scoreboard.prototype.getScore = function() {
     return score;
 };
 
+//object to give visual indication of collision
 var Explosion = function(x, y) {
     // Sprite resources:
     // https://scratch.mit.edu/discuss/topic/205929/?page=1#post-2072127
