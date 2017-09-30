@@ -173,7 +173,7 @@ var Engine = (function (global) {
             gameOver.render();
             totalScore.render();
             setTimeout(reset, 2000);
-        }
+            }
         }
     }
 

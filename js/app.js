@@ -13,7 +13,8 @@ var row0 = 65,
     crashCount = 0,
     winCount = 0,
     won = false,
-    lost = false;
+    lost = false,
+    rows = [row0, row1, row2];
 
 // Enemies our player must avoid
 var Enemy = function(y) {
@@ -31,6 +32,7 @@ var Enemy = function(y) {
     //set a random start order for each enemy by placing them
     //off-screen to the left at random distances
     this.x = randomizer(-500, -100);
+    this.checkCollisions = checkCollisions;
 };
 
 // Update the enemy's position, required method for game
@@ -49,6 +51,7 @@ Enemy.prototype.update = function(dt) {
             this.speed = randomizer(50, 200);
         }
         checkCollisions(this);
+        this.checkCollisions();
     };
 
 // Draw the enemy on the screen, required method for game
@@ -73,7 +76,7 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function() {
-    if(player.y == rowWin) {
+    if(this.y == rowWin) {
         won = true;
     }
     //Keep player on the canvas
@@ -108,11 +111,11 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-function checkCollisions(e) {
+function checkCollisions() {
     //find all of the enemies on the row that player currently occupies
     enemiesAtPlayerRow = [];
-    if(e.y == player.y) {
-        enemiesAtPlayerRow.push(e);
+    if(this.y == player.y) {
+        enemiesAtPlayerRow.push(this);
     }
     enemiesAtPlayerRow.forEach(function(e) {
         // if(e.x - 70 < p.x < e.x + 70) {
@@ -153,12 +156,12 @@ Message.prototype.render = function() {
 };
 
 var Scoreboard = function() {
-    score = 0;
-    };
+    this.score = 0;
+};
 
 //object to display score at bottom of screen
 Scoreboard.prototype.update = function() {
-        score += 100;
+        this.score += 100;
 };
 
 Scoreboard.prototype.render = function() {
@@ -167,11 +170,11 @@ Scoreboard.prototype.render = function() {
     ctx.lineJoin = "round";
     ctx.font =  "20pt impact";
     ctx.textAlign = "center";
-    ctx.fillText(score + " pts", 253, 540);
+    ctx.fillText(this.score + " pts", 253, 540);
 };
 
 Scoreboard.prototype.getScore = function() {
-    return score;
+    return this.score;
 };
 
 //object to give visual indication of collision
@@ -189,18 +192,21 @@ Explosion.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now instantiate your objects.
 var enemy0 = new Enemy(row0),
     enemy1 = new Enemy(row1),
     enemy2 = new Enemy(row2),
     enemy3 = new Enemy(row0),
     enemy4 = new Enemy(row1),
     enemy5 = new Enemy(row2);
+
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [enemy0, enemy1, enemy2, enemy3, enemy4, enemy5];
+
 // Place the player object in a variable called player
 var player = new Player(rowStart);
+
 var scoreboard = new Scoreboard();
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener("keyup", function(e) {
