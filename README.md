@@ -1,5 +1,8 @@
 # Frogger-like Arcade Game
 
+## How to open the application
+* From the "frontend-nanodegree-arcade-game" folder, open the "index.html" file.
+
 ## How to play the game
 * The player starts on the grassy area of the screen.
 * Move the player using the keyboard's cursor keys.
