@@ -1,3 +1,5 @@
+"use strict";
+
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -80,7 +82,6 @@ var Engine = (function (global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -93,6 +94,7 @@ var Engine = (function (global) {
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
+            enemy.checkCollisions();
         });
         player.update();
     }
@@ -156,7 +158,7 @@ var Engine = (function (global) {
         scoreboard.render();
 
         if(won) {
-            var gameWon = new Message("You Win!!!", "yellow", "blue", "10", "72pt impact", 250, row2);
+            var gameWon = new Message("You Win!!!", "yellow", "blue", "10", "72pt impact", 250, ROW2);
             gameWon.render();
             setTimeout(reset, 2000);
             }
@@ -167,9 +169,8 @@ var Engine = (function (global) {
             setTimeout(reset, 100);
         } else {
             lost = true;
-            var gameOver = new Message("Game Over", "yellow", "red", "10", "72pt impact", 250, row2);
-            var totalScore = new Message("your score: " + scoreboard.getScore(), "yellow", "red", "10", "24pt impact", 250, rowStart);
-            // explosion.render();
+            var gameOver = new Message("Game Over", "yellow", "red", "10", "72pt impact", 250, ROW2);
+            var totalScore = new Message("your score: " + scoreboard.getScore(), "yellow", "red", "10", "24pt impact", 250, ROWSTART);
             gameOver.render();
             totalScore.render();
             setTimeout(reset, 2000);
@@ -182,7 +183,7 @@ var Engine = (function (global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        player.y = rowStart;
+        player.y = ROWSTART;
         player.x = 202;
         if(won) {
             scoreboard.update();
@@ -195,7 +196,7 @@ var Engine = (function (global) {
                 crashCount = 0;
                 crash = false;
                 lost = false;
-                score = 0;
+                scoreboard.score = 0;
             }
         }
     }

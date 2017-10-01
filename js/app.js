@@ -1,20 +1,22 @@
-
+"use strict";
 //used 'ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);'
 //to calculate the centers of each row.
 //full_block_height = 101px; overlap = 18px; visible_block_height = 83px;
 
 
-var row0 = 65,
-    row1 = 148,
-    row2 = 231,
-    rowStart = 314,
-    rowWin = -18,
+
+var ROW0 = 65,
+    ROW1 = 148,
+    ROW2 = 231,
+    ROWSTART = 314,
+    ROWWIN = -18,
     crash = false,
     crashCount = 0,
     winCount = 0,
     won = false,
     lost = false,
-    rows = [row0, row1, row2];
+    rows = [ROW0, ROW1, ROW2],
+    explosion;
 
 // Enemies our player must avoid
 var Enemy = function(y) {
@@ -32,7 +34,7 @@ var Enemy = function(y) {
     //set a random start order for each enemy by placing them
     //off-screen to the left at random distances
     this.x = randomizer(-500, -100);
-    this.checkCollisions = checkCollisions;
+    // this.checkCollisions = checkCollisions;
 };
 
 // Update the enemy's position, required method for game
@@ -50,9 +52,16 @@ Enemy.prototype.update = function(dt) {
             this.x = randomizer(-500, -100);
             this.speed = randomizer(50, 200);
         }
-        checkCollisions(this);
-        this.checkCollisions();
     };
+
+Enemy.prototype.checkCollisions = function() {
+    if(this.y == player.y) {
+         if(this.x < player.x + 70 && this.x + 70 > player.x) {
+            explosion = new Explosion(player.x, player.y);
+            crash = true;
+        }
+    }
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -76,15 +85,15 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function() {
-    if(this.y == rowWin) {
+    if(this.y == ROWWIN) {
         won = true;
     }
     //Keep player on the canvas
-    if(this.y < rowWin) {
-        this.y = rowWin;
+    if(this.y < ROWWIN) {
+        this.y = ROWWIN;
     }
-    if(this.y > rowStart) {
-        this.y = rowStart;
+    if(this.y > ROWSTART) {
+        this.y = ROWSTART;
     }
     if(this.x < 0) {
         this.x = 0;
@@ -111,21 +120,21 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-function checkCollisions() {
-    //find all of the enemies on the row that player currently occupies
-    enemiesAtPlayerRow = [];
-    if(this.y == player.y) {
-        enemiesAtPlayerRow.push(this);
-    }
-    enemiesAtPlayerRow.forEach(function(e) {
-        // if(e.x - 70 < p.x < e.x + 70) {
-        // if statement from : https://github.com/Ksan8/arcade-game/blob/collision/js/app.js#L153
-        if(e.x < player.x + 70 && e.x + 70 > player.x) {
-            crash = true;
-            explosion = new Explosion(player.x, player.y);
-        }
-    })
-}
+// function checkCollisions() {
+//     //find all of the enemies on the row that player currently occupies
+//     var enemiesAtPlayerRow = [];
+//     if(this.y == player.y) {
+//         enemiesAtPlayerRow.push(this);
+//     }
+//     enemiesAtPlayerRow.forEach(function(e) {
+//         // if(e.x - 70 < p.x < e.x + 70) {
+//         // if statement from : https://github.com/Ksan8/arcade-game/blob/collision/js/app.js#L153
+//         if(e.x < player.x + 70 && e.x + 70 > player.x) {
+//             explosion = new Explosion(player.x, player.y);
+//             crash = true;
+//         }
+//     })
+// }
 
 function randomizer(min, max) {
     var randomValue = Math.floor(Math.random()*(min) + max);
@@ -192,18 +201,18 @@ Explosion.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-var enemy0 = new Enemy(row0),
-    enemy1 = new Enemy(row1),
-    enemy2 = new Enemy(row2),
-    enemy3 = new Enemy(row0),
-    enemy4 = new Enemy(row1),
-    enemy5 = new Enemy(row2);
+var enemy0 = new Enemy(ROW0),
+    enemy1 = new Enemy(ROW1),
+    enemy2 = new Enemy(ROW2),
+    enemy3 = new Enemy(ROW0),
+    enemy4 = new Enemy(ROW1),
+    enemy5 = new Enemy(ROW2);
 
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [enemy0, enemy1, enemy2, enemy3, enemy4, enemy5];
 
 // Place the player object in a variable called player
-var player = new Player(rowStart);
+var player = new Player(ROWSTART);
 
 var scoreboard = new Scoreboard();
 
